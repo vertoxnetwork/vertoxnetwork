@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VERTOX MANGA NETWORK</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background-color: #121212;
+     background-image: url(/img/bg.jpg)
+      color: #e0e0e0;
+     padding-bottom: 100px; 
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      color: #FFFFFF;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #FFFFFF;
+    }
+
+    /* Preloader */
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #121212;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    #preloader img {
+      width: 200px;
+    }
+
+    /* Search Bar */
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px 0;
+      gap: 10px;
+    }
+
+    .search-bar input {
+      width: 80%;
+      padding: 10px;
+      border-radius: 25px;
+      border: none;
+      font-size: 1rem;
+      background-color: #1e1e1e;
+      color: #fff;
+      outline: none;
+    }
+
+    .search-bar .material-icons {
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #ff6f61;
+    }
+
+    /* Image Slider */
+    .slider {
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      height: 200px;
+    }
+
+    .slider img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      animation: slide 10s infinite;
+    }
+
+    @keyframes slide {
+      0%, 20% { transform: translateX(0); }
+      25%, 45% { transform: translateX(-100%); }
+      50%, 70% { transform: translateX(-200%); }
+      75%, 100% { transform: translateX(-300%); }
+    }
+
+    /* Card Styles */
+    .card {
+      flex: 0 0 auto;
+      width: 240px;
+      height: 135px; /* Aspect ratio of YouTube thumbnails */
+      border-radius: 10px;
+      background-color: #1e1e1e;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    /* Recently Read Section */
+    .recently-read, .all-manga {
+      margin: 20px;
+    }
+
+    .scrolling-cards {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 10px;
+    }
+    
+    /* All Mangas Section */
+    .manga-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    
+    .manga-grid .card {
+      width: 100%;
+      height: auto;
+    }
+
+    /* Bottom Navigation */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #1e1e1e;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    box-shadow: 0 -2px 10px rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+  }
+
+  .nav-item {
+    text-align: center;
+    cursor: pointer;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .nav-item .material-icons {
+    font-size: 1.5rem;
+    color: #FFFFFF;
+  }
+
+  .nav-item:hover {
+    color: #17FF00;
+  }
+  .material-icons:hover {
+    color: #17FF00;
+
+  /* Footer */
+  footer {
+  margin-top: 20px;
+  padding: 15px 0;
+  text-align: center;
+  font-size: 0.9rem;
+  background-color: #1e1e1e;
+  color: #fff;
+  position: relative; /* Ensure it stays in the flow of the document */
+}
+
+  /* Ensure footer is visible above content */
+  body {
+    padding-bottom: 60px; /* Space for bottom navigation */
+  }
+  .material-icons {
+    color: #FFFFFF;
+  }
+  </style>
+</head>
+<body>
+  
+  <div id="preloader">
+  <div style="font-size: 2rem; font-weight: bold; color: #00FF00; animation: fillFlow 2s infinite;">
+    VN
+  </div>
+</div>
+<style>
+  @keyframes fillFlow {
+    0% { color: #00FF00; }
+    50% { color: #0000FF; }
+    100% { color: #00FF00; }
+  }
+</style>
+  
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+  <h1 style="font-size: 1.5rem; color: #FFFFFF; letter-spacing: 2px;">VERTOX MANGA NETWORK</h1>
+  <i class="material-icons" style="font-size: 1.8rem; cursor: pointer; color: #FFFFFF;" onclick="toggleSearch()">search</i>
+</div>
+<div class="search-bar" id="search-bar" style="display: none;">
+  <input type="text" id="search" placeholder="Search Manga...">
+  <i class="material-icons">search</i>
+</div>
+
+
+
+<!-- No Results Message -->
+<div id="no-results" style="display: none; text-align: center; color: #ff6f61; margin: 20px 0;">
+  No Results Found
+</div>
+
+<!-- Image Slider -->
+<div class="slider" id="slider">
+  <a href="/pages/sl.html">
+  <img src="/img/sololeveling/slt.png" alt="solo leveling">
+  </a>
+  <img src="https://via.placeholder.com/1200x400?text=Manga+2" alt="Manga 2">
+  <img src="https://via.placeholder.com/1200x400?text=Manga+3" alt="Manga 3">
+</div>
+
+<!-- Latest Release Section -->
+<div class="recently-read" id="recently-read">
+  <h2>Latest Release</h2>
+  <div class="scrolling-cards">
+    <div class="card">
+      <a href="/pages/sl.html">
+        <img src="/img/sololeveling/slt.png" alt="Solo Leveling">
+        <p>Solo Leveling - The tale of a weak hunter who rises to become the strongest of them all.</p>
+      </a>
+    </div>
+    <div class="card">
+      <img src="/img/bg.jpg" alt="Manga 2">
+      <p>Manga 2 - A thrilling story of adventure and power struggles in a post-apocalyptic world.</p>
+    </div>
+  </div>
+</div>
+
+<!-- All Mangas Section -->
+<div class="all-manga">
+  <h2>All Mangas</h2>
+  <div class="manga-grid" id="manga-grid">
+    <!-- Manga Card -->
+    <div class="card" data-title="Solo Leveling" style="color: white">
+      <div class="card-content">
+        <div class="card-image">
+          <img src="/img/sololeveling/slt.png" alt="Solo Leveling">
+        </div>
+        <div class="card-text" style="color: white">
+          <h3>Solo Leveling</h3>
+          <p>The tale of a weak hunter who rises to become the strongest of them all.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Manga Card -->
+    <div class="card" data-title="One Piece" style="color: white">
+      <div class="card-content">
+        <div class="card-image">
+          <img src="https://via.placeholder.com/240x135" alt="One Piece">
+        </div>
+        <div class="card-text">
+          <h3>One Piece</h3>
+          <p>A pirate adventure that follows Monkey D. Luffy in his search for the legendary treasure.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Manga Card -->
+    <div class="card" data-title="Attack on Titan" style="color: white">
+      <div class="card-content">
+        <div class="card-image">
+          <img src="https://via.placeholder.com/240x135" alt="Attack on Titan">
+        </div>
+        <div class="card-text">
+          <h3>Attack on Titan</h3>
+          <p>Humanity's battle against giant creatures known as Titans, in a world on the brink of extinction.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Manga Card -->
+    <div class="card" data-title="Naruto" style="color: white">
+      <div class="card-content">
+        <div class="card-image">
+          <img src="https://via.placeholder.com/240x135" alt="Naruto">
+        </div>
+        <div class="card-text">
+          <h3>Naruto</h3>
+          <p>The story of a young ninja who dreams of becoming the Hokage, the leader of his village.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item">
+    <i class="material-icons">home</i>
+    <span>Home</span>
+  </div>
+  <div class="nav-item">
+    <i class="material-icons">library_books</i>
+    <span>Library</span>
+  </div>
+  <div class="nav-item">
+    <i class="material-icons">article</i>
+    <span>News</span>
+  </div>
+  <div class="nav-item">
+    <i class="material-icons">history</i>
+    <span>Read</span>
+  </div>
+  <div class="nav-item">
+    <i class="material-icons">person</i> <!-- Updated icon -->
+    <span>Profile</span> <!-- Updated label -->
+  </div>
+</div>
+<footer>
+  POWERED BY VERTOX NETWORK
+</footer>
+
+<script>
+    // Preloader
+    window.onload = () => {
+      const preloader = document.getElementById('preloader');
+      preloader.style.display = 'none';
+    };
+    
+    // Search Functionality and Search Bar Toggle
+    const searchInput = document.getElementById('search');
+    const slider = document.getElementById('slider');
+    const recentlyRead = document.getElementById('recently-read');
+    const mangaGrid = document.getElementById('manga-grid');
+    const noResults = document.getElementById('no-results');
+    const searchBar = document.getElementById('search-bar');
+    
+    // Toggle Search Bar Visibility
+    function toggleSearch() {
+      if (searchBar.style.display === 'none' || searchBar.style.display === '') {
+        searchBar.style.display = 'flex';
+        searchInput.focus();
+      } else {
+        searchBar.style.display = 'none';
+      }
+    }
+    
+    // Filter Manga Cards on Input
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase();
+      const cards = document.querySelectorAll('.manga-grid .card');
+      let hasResults = false;
+    
+      // Show/Hide Content Based on Search Query
+      if (query) {
+        slider.style.display = 'none';
+        recentlyRead.style.display = 'none';
+      } else {
+        slider.style.display = 'block';
+        recentlyRead.style.display = 'block';
+        noResults.style.display = 'none';
+      }
+    
+      // Filter Cards
+      cards.forEach(card => {
+        const title = card.getAttribute('data-title').toLowerCase();
+        if (title.includes(query)) {
+          card.style.display = 'block';
+          hasResults = true;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    
+      // Show 'No Results' if No Matches
+      noResults.style.display = hasResults ? 'none' : 'block';
+    });
+    
+    // Toggle Theme
+    function toggleTheme() {
+      const body = document.body;
+      const toggler = document.getElementById('theme-toggler');
+      const icons = document.querySelectorAll('.material-icons');
+      const text = document.querySelectorAll('h1, h2, p, span');
+    
+      if (body.style.backgroundColor === 'white') {
+        // Switch to Dark Theme
+        body.style.backgroundColor = '#121212';
+        body.style.color = '#e0e0e0';
+        toggler.textContent = 'brightness_4';
+        icons.forEach(icon => (icon.style.color = '#FFFFFF'));
+        text.forEach(el => (el.style.color = '#FFFFFF'));
+      } else {
+        // Switch to Light Theme
+        body.style.backgroundColor = 'white';
+        body.style.color = '#121212';
+        toggler.textContent = 'brightness_2';
+        icons.forEach(icon => (icon.style.color = '#121212'));
+        text.forEach(el => (el.style.color = '#121212'));
+      }
+    }
+    
+    // Redirect to Profile Page (Bottom Navigation)
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const page = item.querySelector('span').textContent.toLowerCase();
+        window.location.href = `${page}.html`;
+      });
+    });
+</script>
+
+  <script>
+              // Redirect to login page if not logged in
+              window.location.href  "login.html";
+  </script>
+  
+</body>
+</html>
