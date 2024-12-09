@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manga Preview</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      height: 100;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      height: 100%;
+      
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 2rem;
+      color: #fff;
+    }
+
+    .landing-page {
+      position: relative;
+      height: 400px;
+      background-image: url('/img/solo leveling /slt.png');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .landing-page i {
+      font-size: 2rem;
+      color: #fff;
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      cursor: pointer;
+    }
+
+    .landing-page h2 {
+      font-size: 2.5rem;
+      color: #fff;
+      text-align: center;
+    }
+
+    .navigation-preview {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  position: sticky; /* Fix navigation at the top */
+  top: 0;
+  width: 100%;  /* Make sure it spans the entire width */
+  background-color: #121212;
+  z-index: 1000;  /* Make sure it's above the content */
+  padding: 10px 0;
+}
+
+.nav-item {
+  color: #fff;
+  margin: 0 20px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.nav-item:hover {
+  color: #17FF00;
+}
+
+.nav-item:hover::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  background-color: #17FF00;
+  bottom: -5px;
+  left: 0;
+}
+
+
+    .episode-section {
+      margin: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .episode-card {
+      display: flex;
+      margin: 10px 0;
+      padding: 15px;
+      background-color: #1e1e1e;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 80%;
+    }
+
+    .episode-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    }
+
+    .episode-card img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .episode-card .content {
+      margin-left: 20px;
+      color: #fff;
+    }
+
+    .episode-card .content h3 {
+      font-size: 1.2rem;
+    }
+
+    .episode-card .content p {
+      font-size: 1rem;
+      color: #bbb;
+    }
+
+    .no-preview {
+      font-size: 1.5rem;
+      color: #ff6f61;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .pdf-viewer {
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .next-chapter {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .next-chapter button {
+      background-color: #17FF00;
+      color: white;
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .next-chapter button:hover {
+      background-color: #28a745;
+    }
+
+    /* Style for the manga images in vertical format */
+    .image-viewer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+
+    .image-viewer img {
+      width: 100%;
+  height: auto;
+  object-fit: cover;  /* Ensure image covers the section properly */
+  margin-bottom: 15px;
+  align-items: center;
+  align-content: center;
+}
+
+    /* Preview Section with vertically scrollable images */
+    /* Preview Section (Fixed duplicates) */
+.preview-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-y: auto;  /* Only allow vertical scroll within this section */
+  height: 100vh;  /* Full height of the viewport */
+  width: 100%;
+  position: relative;
+  padding-top: 60px;  /* Make room for the navigation bar */
+  scroll-behavior: smooth; /* Optional smooth scrolling */
+}
+
+.preview-content img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;  /* Ensure image covers the section properly */
+  margin-bottom: 15px;
+  align-items: center;
+  align-content: center;
+}
+    /* Countdown Timer */
+    .countdown {
+      text-align: center;
+      font-size: 1.5rem;
+      color: greenyellow;
+      margin-top: 50px;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="preloader">
+  <div style="font-size: 2rem; font-weight: bold; color: #00FF00; animation: fillFlow 2s infinite;">
+    VN
+  </div>
+</div>
+<style>
+  @keyframes fillFlow {
+    0% { color: #00FF00; }
+    50% { color: #0000FF; }
+    100% { color: #00FF00; }
+  }
+</style>
+
+<!-- Landing Page Section with Manga Preview -->
+<div class="landing-page">
+  <i class="material-icons" onclick="window.location.href='home.html'">arrow_back</i>
+</div>
+
+<!-- Countdown Timer -->
+<div class="countdown" id="countdown-timer" style="color: white">
+  Time until next chapter release: <span  style="color: greenyellow" id="timer"></span>
+</div>
+
+
+
+<!-- Episode Section -->
+<div class="episode-section" id="episode-section">
+  <div class="episode-card" onclick="showChapter(0)">
+    <img src="https://via.placeholder.com/120x120" alt="preview">
+    <div class="content">
+      <h3>Preview: Beginnings</h3>
+      <p>Introduction to the  story.</p>
+    </div>
+  </div>
+
+  <div class="episode-card" onclick="showChapter(2)">
+    <img src="https://via.placeholder.com/120x120" alt="Chapter 2">
+    <div class="content">
+      <h3>Chapter 2: Rising Action</h3>
+      <p>The plot intensifies...</p>
+    </div>
+  </div>
+
+  <!-- More chapters can go here -->
+
+  <div class="no-preview" id="no-preview">No Preview Available</div>
+</div>
+
+<!-- Manga Chapter Image Viewer -->
+<div class="image-viewer" id="image-viewer" style="display: none;">
+  <div id="image-gallery"></div>
+  <div id="back-to-chapters" onclick="backToChapters()">Back to Chapters</div>
+</div>
+
+
+
+<!-- Next Chapter Button -->
+<div class="next-chapter" id="next-chapter" style="display: none;">
+  <button onclick="goToNextChapter()">Next Chapter</button>
+</div>
+
+<script>
+
+    // Preloader
+    window.onload = () => {
+      const preloader = document.getElementById('preloader');
+      preloader.style.display = 'none';
+    };
+  function showPreview() {
+    document.getElementById('episode-section').style.display = 'none';
+    document.getElementById('image-viewer').style.display = 'none';
+    document.getElementById('next-chapter').style.display = 'none';
+    document.getElementById('no-preview').style.display = 'none';
+    document.getElementById('preview-content').style.display = 'block'; // Show preview content
+  }
+
+  function showEpisodes() {
+    document.getElementById('episode-section').style.display = 'flex';
+    document.getElementById('image-viewer').style.display = 'none';
+    document.getElementById('next-chapter').style.display = 'none';
+    document.getElementById('no-preview').style.display = 'none';
+    document.getElementById('preview-content').style.display = 'none';  // Hide preview content
+  }
+
+  // Function to show the chapter and update recently read manga
+  function showChapter(chapter, mangaTitle, mangaPage, mangaImage) {
+    // Hide episode section and show image viewer
+    document.getElementById('episode-section').style.display = 'none';
+    document.getElementById('image-viewer').style.display = 'block';
+  
+    let imagePaths = [];
+  
+    // Set image paths for the selected chapter
+    if (chapter === 0) {
+      imagePaths = [
+        '/img/sololeveling/000/sololeveling01.png',
+        '/img/sololeveling/000/sololeveling0&2.png.jpg',
+        '/img/sololeveling/000/sololeveling0&3.png.jpg',
+        '/img/sololeveling/000/sololeveling0&4.png.jpg',
+        '/img/sololeveling/000/sololeveling0&5.png.jpg',
+        '/img/sololeveling/000/sololeveling0&6.png.jpg',
+        '/img/sololeveling/000/sololeveling0&7.png.jpg',
+        '/img/sololeveling/000/sololeveling0&8.png.jpg',
+        '/img/sololeveling/000/sololeveling0&9.png.jpg',
+        '/img/sololeveling/000/sololeveling0&10.png.jpg',
+        '/img/sololeveling/000/sololeveling0&11.png.jpg',
+        '/img/sololeveling/000/sololeveling0&12.png.jpg',
+        // Add more image paths as needed
+      ];
+    } else if (chapter === 2) {
+      imagePaths = [
+        '/img/sl004.jpg',
+        '/img/sl005.jpg',
+        '/img/sl006.jpg' // Add more image paths as needed
+      ];
+    }
+  
+    // Clear previous images
+    document.getElementById('image-gallery').innerHTML = '';
+  
+    // Load images dynamically
+    imagePaths.forEach(path => {
+      let imgElement = document.createElement('img');
+      imgElement.src = path;
+      imgElement.alt = 'Manga Image';
+      document.getElementById('image-gallery').appendChild(imgElement);
+    });
+  
+    // Store the chapter in localStorage (recently read)
+    let recentlyRead = JSON.parse(localStorage.getItem('recentlyRead')) || [];
+  
+    // Add the current manga to recently read
+    recentlyRead.unshift({
+      title: mangaTitle,
+      image: mangaImage, // The correct image path for the manga
+      description: 'A description of ' + mangaTitle + '...',
+      mangaPage: mangaPage
+    });
+  
+    // Limit to the last 5 manga in history
+    if (recentlyRead.length > 5) {
+      recentlyRead.pop(); // Remove the last (oldest) manga
+    }
+  
+    // Save back to localStorage
+    localStorage.setItem('recentlyRead', JSON.stringify(recentlyRead));
+  
+    // Update history UI (display recently read manga at the top)
+    updateHistoryUI(recentlyRead);
+  }
+  
+  // Function to update the history section UI
+  function updateHistoryUI(recentlyRead) {
+    let historySection = document.getElementById('history-section');
+    historySection.innerHTML = ''; // Clear previous history
+  
+    recentlyRead.forEach(manga => {
+      let mangaCard = document.createElement('div');
+      mangaCard.className = 'manga-card';
+  
+      let imgElement = document.createElement('img');
+      imgElement.src = manga.image;
+      imgElement.alt = 'Manga Image';
+      mangaCard.appendChild(imgElement);
+  
+      let titleElement = document.createElement('p');
+      titleElement.textContent = manga.title;
+      mangaCard.appendChild(titleElement);
+  
+      // Add click event to go to the manga page
+      mangaCard.onclick = function() {
+        window.location.href = manga.mangaPage + '.html';
+      };
+  
+      // Append the new card to the top of the history section
+      historySection.insertBefore(mangaCard, historySection.firstChild);
+    });
+  }
+  
+  // When the page loads, display the history
+  document.addEventListener('DOMContentLoaded', function() {
+    let recentlyRead = JSON.parse(localStorage.getItem('recentlyRead')) || [];
+    updateHistoryUI(recentlyRead); // Display the recent manga history
+  });
+  function backToChapters() {
+    document.getElementById('episode-section').style.display = 'block';
+    document.getElementById('image-viewer').style.display = 'none';
+  }
+
+  function goToNextChapter() {
+    // Here you can implement logic to load the next chapter's PDF or navigate to the next chapter.
+    alert('Going to the next chapter...');
+  }
+
+  // Countdown Timer Logic (Next Sunday at 8 PM)
+  function updateCountdown() {
+    const now = new Date();
+    let nextSunday = new Date();
+  
+    // If today is Sunday and it's before 8 PM, set the next Sunday countdown to today at 8 PM
+    if (now.getDay() === 0 && now.getHours() < 20) {
+      nextSunday.setDate(now.getDate()); // Set to today
+      nextSunday.setHours(20, 0, 0, 0); // Set to 8:00 PM today
+    }
+    // If today is Sunday and it's after 8 PM, set the countdown for next Sunday at 8 PM
+    else if (now.getDay() === 0 && now.getHours() >= 20) {
+      nextSunday.setDate(now.getDate() + 7); // Move to the next Sunday
+      nextSunday.setHours(20, 0, 0, 0); // Set to 8:00 PM next Sunday
+    }
+    // If it's any other day of the week, set the countdown for next Sunday at 8 PM
+    else {
+      nextSunday.setDate(now.getDate() + (7 - now.getDay())); // Next Sunday
+      nextSunday.setHours(20, 0, 0, 0); // Set to 8:00 PM
+    }
+  
+    const timeDiff = nextSunday - now;
+    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+  
+    document.getElementById('timer').textContent = `${hours}h ${minutes}m ${seconds}s`;
+  
+    if (timeDiff <= 0) {
+      // If time is up, reset the countdown
+      updateCountdown();
+    }
+  }
+  
+  // Initialize the countdown timer
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+</script>
+
+</body>
+</html>
