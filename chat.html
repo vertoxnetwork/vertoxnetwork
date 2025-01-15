@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHAT HUB - NEX STUDIO</title>
+
+  <!-- Google Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #fbc2eb);
+      background-size: 300% 300%;
+      animation: gradientBG 6s ease infinite;
+      overflow-x: hidden;
+      color: #fff;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: space-between;
+    }
+
+    /* Title Bar */
+    .title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 15px 20px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .title-bar img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .title-bar h2 {
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-bar i {
+      font-size: 28px;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    .title-bar i:hover {
+      color: #ffafcc;
+    }
+
+    /* Chat Area */
+    .chat-area {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      max-width: 60%;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 20px;
+      color: #fff;
+      font-size: 14px;
+      word-wrap: break-word;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.3s ease;
+      position: relative;
+    }
+
+    .incoming {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .outgoing {
+      align-self: flex-end;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .message img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-bottom: 5px;
+    }
+
+    /* Input Bar */
+    .input-bar {
+      display: flex;
+      padding: 10px 15px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-top: 2px solid rgba(255, 255, 255, 0.2);
+      align-items: center;
+    }
+
+    .input-bar input {
+      flex-grow: 1;
+      padding: 12px 15px;
+      border-radius: 25px;
+      border: none;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      margin-right: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .input-bar input:focus {
+      background-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .input-bar button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 24px;
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+
+    .input-bar button:hover {
+      color: #ffafcc;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Title Bar -->
+    <div class="title-bar">
+      <i class="material-icons" id="backBtn" onclick="location.href='main.html'">arrow_back</i>
+      <h2>
+        <img src="https://cdn.dribbble.com/userupload/7299809/file/original-b4fb6699dfb8cac772536f6266696db5.jpg" alt="Group Profile">
+        CHAT HUB
+      </h2>
+      <i class="material-icons">more_vert</i>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="chat-area" id="chatArea">
+      <!-- Chat messages will be dynamically added here -->
+    </div>
+
+    <!-- Input Bar -->
+    <div class="input-bar">
+      <input type="file" id="imageInput" accept="image/*" style="display:none;">
+      <input type="text" id="messageInput" placeholder="Type your message...">
+      <button id="sendBtn"><i class="material-icons">send</i></button>
+      <button id="attachBtn"><i class="material-icons">attach_file</i></button>
+    </div>
+  </div>
+
+
+  <!-- Firebase SDK -->
+  <!-- Updated Firebase Configuration and Logic -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-PxkSfW_-xqTELYxtktEk77xMYaHAhmg",
+    authDomain: "vertoxnetwork-eb4b8.firebaseapp.com",
+    projectId: "vertoxnetwork-eb4b8",
+    storageBucket: "vertoxnetwork-eb4b8.appspot.com",
+    messagingSenderId: "864203448",
+    appId: "1:864203448:web:721f5c05ecccc99fa23a4d",
+    measurementId: "G-R754VKY3EV"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth();
+  const storage = getStorage(app);
+
+  let currentUser = null;
+
+  const chatArea = document.getElementById('chatArea');
+  const messageInput = document.getElementById('messageInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const imageInput = document.getElementById('imageInput');
+  const attachBtn = document.getElementById('attachBtn');
+
+  // Generate a random 4-digit ID
+  function generateUserId() {
+    return Math.floor(1000 + Math.random() * 9000).toString();
+  }
+
+  // Assign user ID if not already assigned
+  async function setupUser(user) {
+  const userRef = doc(db, 'users', user.uid);
+  const userSnapshot = await getDoc(userRef);
+
+  if (!userSnapshot.exists()) {
+    const userId = generateUserId();
+    await setDoc(userRef, { id: userId, email: user.email });
+    currentUser = { uid: user.uid, id: userId };
+  } else {
+    currentUser = { uid: user.uid, id: userSnapshot.data().id };
+  }
+}
+
+  // Load messages from Firestore
+  function loadMessages() {
+    const q = query(collection(db, 'messages'), orderBy('timestamp'));
+    onSnapshot(q, (snapshot) => {
+      chatArea.innerHTML = ''; // Clear chat area before displaying messages
+      snapshot.forEach((doc) => {
+        const messageData = doc.data();
+        addMessage(messageData);
+      });
+    }, (error) => {
+      console.error("Error loading messages: ", error);
+    });
+  }
+
+  // Function to add a chat message to the chat area
+  function addMessage(message) {
+  const messageDiv = document.createElement('div');
+  messageDiv.classList.add('message', message.userId === currentUser?.id ? 'outgoing' : 'incoming');
+
+  const userIdDiv = document.createElement('div');
+  userIdDiv.classList.add('username');
+  userIdDiv.innerText = `User ${message.userId}`;
+
+  const messageContent = document.createElement('div');
+  messageContent.innerText = message.text || '';
+
+  if (message.image) {
+    const img = document.createElement('img');
+    img.src = message.image;
+    img.style.maxWidth = '200px';
+    img.style.marginTop = '10px';
+    messageContent.appendChild(img);
+  }
+
+  messageDiv.appendChild(userIdDiv);
+  messageDiv.appendChild(messageContent);
+  chatArea.appendChild(messageDiv);
+  chatArea.scrollTop = chatArea.scrollHeight; // Scroll to bottom
+}
+  // Send message function
+  async function sendMessage() {
+  const text = messageInput.value.trim();
+
+  // Ensure the message input is not empty
+  if (!text && imageInput.files.length === 0) {
+    alert("Please enter a message or select an image.");
+    return;
+  }
+
+  // Check if the currentUser is available
+  if (!currentUser) {
+    alert("User not authenticated.");
+    return;
+  }
+
+  // Prepare the message data
+  const messageData = {
+    text: text || null,
+    userId: currentUser.id,
+    timestamp: serverTimestamp(),
+  };
+
+  // Handle image upload if a file is selected
+  if (imageInput.files.length > 0) {
+    const file = imageInput.files[0];
+    const storageRef = ref(storage, `chat-images/${Date.now()}_${file.name}`);
+
+    try {
+      // Upload image to Firebase Storage
+      await uploadBytes(storageRef, file);
+
+      // Get image URL from Firebase Storage
+      const imageUrl = await getDownloadURL(storageRef);
+      messageData.image = imageUrl;
+    } catch (error) {
+      console.error("Error uploading image: ", error);
+      alert("Failed to upload image. Please try again.");
+      return;
+    }
+  }
+
+  // Send the message to Firestore
+  try {
+    await addDoc(collection(db, 'messages'), messageData);
+    messageInput.value = ''; // Clear the input field
+    imageInput.value = ''; // Reset the image input
+    messageInput.placeholder = "Type your message..."; // Reset placeholder
+  } catch (error) {
+    console.error("Error sending message: ", error);
+    alert("Failed to send the message. Please try again.");
+  }
+}
+  // Event listener for send button
+  sendBtn.addEventListener('click', sendMessage);
+
+  // Load messages on page load
+  loadMessages();
+
+  // Get the current user and set up ID
+  onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    await setupUser(user);
+    console.log("User authenticated:", currentUser);
+  } else {
+    console.log("User is not authenticated");
+  }
+});
+
+  // Event listeners
+  attachBtn.addEventListener('click', () => {
+    imageInput.click(); // Trigger file input click
+  });
+
+  imageInput.addEventListener('change', () => {
+    const fileName = imageInput.files[0]?.name || '';
+    messageInput.placeholder = fileName ? `Selected: ${fileName}` : "Type your message...";
+  });
+</script>
+        
+        </body> 
+        </html>
